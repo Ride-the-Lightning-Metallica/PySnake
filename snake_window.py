@@ -16,23 +16,26 @@ class SnakeWindow():
         self.clock = pygame.time.Clock()
         pygame.display.set_caption(self.title)
 
-    def set_text(self, help_text, font_name, font_size, font_color, centery, bold=False) -> None:
+    def set_text(self, text, font_name, font_size, font_color, centery, bold=False) -> tuple:
         font = pygame.font.SysFont(font_name, font_size, bold=bold)
 
-        help_text = font.render(help_text, True, font_color)
-        self.help_text_position = help_text.get_rect(centerx=self.screen_centerx, centery=centery)
+        text = font.render(text, True, font_color)
+        text_position = text.get_rect(centerx=self.screen_centerx, centery=centery)
 
-        self.screen.blit(help_text, self.help_text_position)
+        self.screen.blit(text, text_position)
 
-    def make_field(self, width, height, color, border_radius) -> None:
+        return text_position
+
+    def make_field(self, width, height) -> None:
         self.field_surface = pygame.Surface((width, height))
         self.field_surface.fill(self.background_color)
         # If not need -> make local variable
         self.field_surface_position = self.field_surface.get_rect(
             centerx=self.screen_centerx,
             centery=self.screen_centery
-        )
+        ) 
 
+    def update_field(self, color, border_radius):
         pygame.draw.rect(
             self.field_surface,
             color,
@@ -40,7 +43,6 @@ class SnakeWindow():
             border_radius=border_radius
         )
 
-        self.screen.blit(self.field_surface, self.field_surface_position)
-
     def loop(self):
         raise Exception('Override this method')
+        
