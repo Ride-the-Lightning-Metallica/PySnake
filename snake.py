@@ -69,6 +69,11 @@ class Game(snake_window.SnakeWindow):
 
                 if self.snake.collision_with_self:
                     self.restart()
+                    continue
+                
+                if not self.apple.is_exists:
+                    self.score += 1
+                    print(self.score)
 
             for event in pygame.event.get():
                 if event.type == pygame.constants.QUIT:
@@ -120,11 +125,14 @@ class Snake():
                 color = self.head_color
             else:
                 color = self.color
-            pygame.draw.rect(
+            rect = pygame.draw.rect(
                 surface,
                 color,
                 (element['x'], element['y'], self.cell_size, self.cell_size)
             )
+            if rect.colliderect(apple.get_rect()):
+                self.max_tails += 1
+                apple.is_exists = False
 
             for position in self.tails[index+1:]:
                 if element['x'] == position['x'] and element['y'] == position['y']:
@@ -148,11 +156,18 @@ class Apple():
         if not self.is_exists:
             self.update_position()
             self.is_exists = True
-        pygame.draw.rect(self.surface, self.color, (self.x, self.y, self.size, self.size))
+        self.rect = pygame.draw.rect(
+            self.surface,
+            self.color,
+            (self.x, self.y, self.size, self.size)
+        )
         
     def update_position(self):
-        self.x = randint(5, (self.surface.get_width() / self.cell_size)) * self.cell_size
-        self.y = randint(5, (self.surface.get_height() / self.cell_size)) * self.cell_size
+        self.x = randint(5, (self.surface.get_width() / self.cell_size - 2)) * self.cell_size
+        self.y = randint(5, (self.surface.get_height() / self.cell_size -2)) * self.cell_size
+
+    def get_rect(self):
+        return self.rect
 
 if __name__ == '__main__':
     Game(550, 650, 'PySnake', (53, 51, 54), 12)

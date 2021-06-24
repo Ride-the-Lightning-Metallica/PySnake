@@ -2,7 +2,7 @@ import pygame
 
 class SnakeWindow():
     def __init__(self, width, height, title, background_color, FPS) -> None:
-        pygame.init()
+        pygame.init() # pylint: disable=no-member
         self.width = width
         self.height = height
         self.title = title
