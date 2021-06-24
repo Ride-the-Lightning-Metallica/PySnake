@@ -1,5 +1,5 @@
 import pygame
-import sys
+from sys import exit
 from random import randint
 
 import snake_window
@@ -17,17 +17,8 @@ class Game(snake_window.SnakeWindow):
                 'verdana', 32, (202, 76, 38),
                 60, bold=True
             ) 
-        pygame.draw.rect(
-            self.screen,
-            (18, 18, 20),
-            (self.screen_centerx - 95, 100, 190, 70),
-            border_radius=5
-        )
-        self.score_count_position = self.set_text(
-                '0',
-                'verdana', 32, (202, 76, 38),
-                135, bold=True
-            )
+        
+        self.set_score()
         
         self.make_field(320, 400)
         self.update_field((22, 22, 24), 7)
@@ -40,6 +31,7 @@ class Game(snake_window.SnakeWindow):
 
     def restart(self):
         self.score = 0
+        self.set_score()
         self.snake = Snake(100, 100, 0, self.cell_size, 3, (62, 194, 90), (47, 158, 71))
 
     def collision_with_border(self):
@@ -56,6 +48,18 @@ class Game(snake_window.SnakeWindow):
         elif self.snake.y >= surface_height:
             self.snake.y = 0
 
+    def set_score(self):
+        pygame.draw.rect(
+            self.screen,
+            (18, 18, 20),
+            (self.screen_centerx - 95, 100, 190, 70),
+            border_radius=5
+        )
+        self.score_count_position = self.set_text(
+                str(self.score),
+                'verdana', 32, (202, 76, 38),
+                135, bold=True
+            )
 
     def loop(self):
         while True:
@@ -69,31 +73,34 @@ class Game(snake_window.SnakeWindow):
 
                 if self.snake.collision_with_self:
                     self.restart()
-                    continue
                 
                 if not self.apple.is_exists:
                     self.score += 1
-                    print(self.score)
+                    self.set_score()
 
             for event in pygame.event.get():
                 if event.type == pygame.constants.QUIT:
-                    sys.exit()
+                    exit()
                 if event.type == pygame.constants.KEYDOWN:
                     if event.key == pygame.constants.K_SPACE:
                         self.is_run = True
                         pygame.draw.rect(self.screen, self.background_color, self.help_text_position)
-                    if event.key == pygame.constants.K_UP:
-                        if self.snake.tails[0]['x'] != self.snake.tails[1]['x']: 
-                            self.snake.turn(0, -self.cell_size)
-                    elif event.key == pygame.constants.K_DOWN:
-                        if self.snake.tails[0]['x'] != self.snake.tails[1]['x']:
-                            self.snake.turn(0, self.cell_size)
-                    elif event.key == pygame.constants.K_LEFT:
-                        if self.snake.tails[0]['y'] != self.snake.tails[1]['y']:
-                            self.snake.turn(-self.cell_size, 0)
-                    elif event.key == pygame.constants.K_RIGHT:
-                        if self.snake.tails[0]['y'] != self.snake.tails[1]['y']:
-                            self.snake.turn(self.cell_size, 0)
+                    
+                    # If the user didn't press space or
+                    # new snake instance was created
+                    if self.snake.tails != []:
+                        if event.key == pygame.constants.K_UP:
+                            if self.snake.tails[0]['x'] != self.snake.tails[1]['x']: 
+                                self.snake.turn(0, -self.cell_size)
+                        elif event.key == pygame.constants.K_DOWN :
+                            if self.snake.tails[0]['x'] != self.snake.tails[1]['x']:
+                                self.snake.turn(0, self.cell_size)
+                        elif event.key == pygame.constants.K_LEFT:
+                            if self.snake.tails[0]['y'] != self.snake.tails[1]['y']:
+                                self.snake.turn(-self.cell_size, 0)
+                        elif event.key == pygame.constants.K_RIGHT:
+                            if self.snake.tails[0]['y'] != self.snake.tails[1]['y']:
+                                self.snake.turn(self.cell_size, 0)
 
             self.clock.tick(self.FPS)
             pygame.display.update()
