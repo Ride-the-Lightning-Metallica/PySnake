@@ -45,4 +45,3 @@ class SnakeWindow():
 
     def loop(self):
         raise Exception('Override this method')
-        
